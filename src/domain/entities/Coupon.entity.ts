@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
   InsertCouponModel,
   ListedCouponModel,
+  ToggledCouponStatusModel,
 } from '../../data/model/Coupons.model';
 
 export const InsertCouponSchema = z.object({
@@ -155,6 +156,26 @@ export class ListedCoupon {
 
     entity.usedCount = model.usedCount;
 
+    return entity;
+  }
+}
+
+export class ToggleCouponStatus {
+  id!: string;
+}
+
+export class ToggledCouponStatus {
+  code!: string;
+  isActive!: boolean;
+
+  public static fromModel(
+    model: ToggledCouponStatusModel,
+  ): ToggledCouponStatus {
+    const entity = new ToggledCouponStatus();
+
+    entity.code = model.code;
+
+    entity.isActive = model.isActive;
     return entity;
   }
 }

@@ -94,6 +94,24 @@ export class RemoteDataSource {
     return serialized.data;
   }
 
+  public async patch<Response extends SerializeSchemas>({
+    model,
+    url,
+    body,
+  }: RemotePostReq<Response>): RemoteRequestRes<Response> {
+    const { data } = await this.api.patch<Response>(url, body, {
+      timeout: 100000,
+    });
+
+    const serialized = model.safeParse(data);
+
+    console.log(serialized.error?.errors);
+
+    if (!serialized.success) return null;
+
+    return serialized.data;
+  }
+
   public static checkError(err: AxiosError) {
     switch (err?.response?.status) {
       case HttpStatusCode.Unauthorized:

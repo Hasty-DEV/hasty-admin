@@ -35,3 +35,13 @@ export const ListedCouponModel = z.object({
   isActive: z.boolean(),
 });
 export type ListedCouponModel = z.infer<typeof ListedCouponModel>;
+
+export class ToggleCouponStatusModel {
+  id!: string;
+}
+
+export const ToggledCouponStatusModel = z.object({
+  code: z.string().min(1),
+  isActive: z.boolean(),
+});
+export type ToggledCouponStatusModel = z.infer<typeof ToggledCouponStatusModel>;

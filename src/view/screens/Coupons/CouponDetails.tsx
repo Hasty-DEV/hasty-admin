@@ -1,39 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { ListedCoupon } from '../../../domain/entities/Coupon.entity';
-import { UseCases } from '../../../domain/usecases/UseCases';
 import { Loader } from '../../components/Loader';
+import { useCouponDetails } from './useCouponDetails';
 
 export function CouponDetails() {
-  const { id } = useParams<{ id: string }>();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [coupon, setCoupon] = useState<ListedCoupon>();
+  const { coupon, loading } = useCouponDetails();
 
-  const fetchCoupon = async (id: string) => {
-    setLoading(true);
-    try {
-      const { result } = await UseCases.coupon.listOne.execute({ id });
-
-      if (result.type === 'ERROR') {
-        alert('ERRO AO BUSCAR CUPOM');
-        return;
-      }
-
-      setCoupon(result.data);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!id) {
-      return;
-    }
-
-    fetchCoupon(id);
-  }, [id]);
-
-  if (!coupon) {
+  if (!coupon.value) {
     return <div className="text-red-500">Cupom não encontrado.</div>;
   }
 
@@ -47,59 +18,60 @@ export function CouponDetails() {
         <div className="py-4">
           <div>
             <strong className="text-lg">Código:</strong>
-            <p className="text-xl">{coupon.code}</p>
+            <p className="text-xl">{coupon.value.code}</p>
           </div>
 
           <div>
             <strong className="text-lg">Valor de Desconto:</strong>
             <p className="text-xl">
-              {coupon.discountValue}
-              {coupon.discountType === 'percentage' ? '%' : 'R$'}
+              {coupon.value.discountValue}
+              {coupon.value.discountType === 'percentage' ? '%' : 'R$'}
             </p>
           </div>
 
-          {coupon.validUntil && (
+          {coupon.value.validUntil && (
             <div>
               <strong className="text-lg">Válido Até:</strong>
-              <p className="text-xl">{coupon.validUntil}</p>
+              <p className="text-xl">{coupon.value.validUntil}</p>
             </div>
           )}
 
-          {coupon.minPurchaseValue && (
+          {coupon.value.minPurchaseValue && (
             <div>
               <strong className="text-lg">Valor Mínimo de Compra:</strong>
-              <p className="text-xl">{coupon.minPurchaseValue} R$</p>
+              <p className="text-xl">{coupon.value.minPurchaseValue} R$</p>
             </div>
           )}
 
-          {coupon.maxDiscountValue && (
+          {coupon.value.maxDiscountValue && (
             <div>
               <strong className="text-lg">Valor Máximo de Desconto:</strong>
-              <p className="text-xl">{coupon.maxDiscountValue} R$</p>
+              <p className="text-xl">{coupon.value.maxDiscountValue} R$</p>
             </div>
           )}
 
-          {coupon.usageLimit && (
+          {coupon.value.usageLimit && (
             <div>
               <strong className="text-lg">Limite de Uso:</strong>
-              <p className="text-xl">{coupon.usageLimit}</p>
+              <p className="text-xl">{coupon.value.usageLimit}</p>
             </div>
           )}
 
           <div>
             <strong className="text-lg">Contagem de Uso:</strong>
-            <p className="text-xl">{coupon.usedCount}</p>
+            <p className="text-xl">{coupon.value.usedCount}</p>
           </div>
 
           <div>
             <strong className="text-lg">Ativo:</strong>
-            <p className="text-xl">{coupon.isActive ? 'Sim' : 'Não'}</p>
+            <p className="text-xl">{coupon.value.isActive ? 'Sim' : 'Não'}</p>
           </div>
         </div>
         <div className="w-full">
           <button
             type="button"
             className="w-full bg-blue-600 text-white px-6 py-4 rounded-sm"
+            onClick={() => coupon.toggleStatus(coupon.id ?? '')}
           >
             Trocar Status
           </button>

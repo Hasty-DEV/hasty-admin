@@ -7,6 +7,8 @@ import {
   InsertedCouponModel,
   ListCouponsModel,
   ListedCouponModel,
+  ToggleCouponStatusModel,
+  ToggledCouponStatusModel,
 } from '../model/Coupons.model';
 
 export type InsertReq = InsertCouponModel;
@@ -30,7 +32,16 @@ export type ListOneRes = Promise<
   Result<ListedCouponModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
+export type ToggleStatusReq = ToggleCouponStatusModel;
+export type ToggleStatusRes = Promise<
+  Result<
+    ToggledCouponStatusModel,
+    { code: 'SERIALIZATION' } | DefaultResultError
+  >
+>;
+
 export interface CouponRepository {
+  toggleStatus(req: ToggleStatusReq): ToggleStatusRes;
   listAll(req: ListALLReq): ListALLRes;
   listOne(req: ListOneReq): ListOneRes;
   insert(req: InsertReq): InsertRes;
@@ -38,6 +49,21 @@ export interface CouponRepository {
 
 export class CouponRepositoryImpl implements CouponRepository {
   constructor(private api: RemoteDataSource) {}
+
+  @ExceptionHandler()
+  async toggleStatus(req: ToggleStatusReq): ToggleStatusRes {
+    const result = await this.api.patch({
+      url: `/coupons/toggle-status`,
+      model: ToggledCouponStatusModel,
+      body: req,
+    });
+
+    if (!result) {
+      return Result.Error({ code: 'SERIALIZATION' });
+    }
+
+    return Result.Success(result);
+  }
 
   @ExceptionHandler()
   async listAll(): ListALLRes {
