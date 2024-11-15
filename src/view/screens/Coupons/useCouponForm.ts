@@ -25,19 +25,18 @@ export function useCouponForm() {
     try {
       const { result } = await UseCases.coupon.insert.execute(data);
 
-      if(result.type === "ERROR") {
-        switch(result.error.code) {
-          case "ALREADY_EXISTS":
-            alert("CUPOM JÁ EXISTE!");
+      if (result.type === 'ERROR') {
+        switch (result.error.code) {
+          case 'ALREADY_EXISTS':
+            alert('CUPOM JÁ EXISTE!');
             return;
-          default: 
-          alert("ERRO AO CRIAR O CUPOM");
-        return;
+          default:
+            alert('ERRO AO CRIAR O CUPOM');
+            return;
         }
-        
       }
 
-      alert("CUPOM CRIADO COM SUCESSO");
+      alert('CUPOM CRIADO COM SUCESSO');
     } finally {
       setLoading(false);
     }

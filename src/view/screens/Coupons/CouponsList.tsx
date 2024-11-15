@@ -1,8 +1,8 @@
-import { Loader } from "../../components/Loader";
-import { useCouponsList } from "./useCouponsList";
+import { Loader } from '../../components/Loader';
+import { useCouponsList } from './useCouponsList';
 
 export function CouponsList() {
-    const { coupons, loading } = useCouponsList();
+  const { coupons, loading } = useCouponsList();
 
   return (
     <>

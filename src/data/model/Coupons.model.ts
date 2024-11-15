@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-
 export class InsertCouponModel {
   code!: string;
   discountType!: 'percentage' | 'fixedAmount';
@@ -18,7 +17,6 @@ export const InsertedCouponModel = z.object({
   id: z.string().min(1),
 });
 export type InsertedCouponModel = z.infer<typeof InsertedCouponModel>;
-
 
 export class ListAllCouponsModel {}
 

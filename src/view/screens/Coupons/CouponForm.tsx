@@ -1,12 +1,17 @@
-import { useCouponForm } from "./useCouponForm";
+import { useCouponForm } from './useCouponForm';
 
 export function CouponForm() {
   const { form } = useCouponForm();
-  
+
   return (
     <div className="w-full p-6">
-      <h1 className="text-2xl font-bold text-center pb-2">Formulário de Cupom</h1>
-      <form onSubmit={form.onsubmit} className='grid grid-cols-12 gap-x-4 gap-y-6'>
+      <h1 className="text-2xl font-bold text-center pb-2">
+        Formulário de Cupom
+      </h1>
+      <form
+        onSubmit={form.onsubmit}
+        className="grid grid-cols-12 gap-x-4 gap-y-6"
+      >
         <div className="col-span-12">
           <label
             htmlFor="code"
@@ -125,7 +130,9 @@ export function CouponForm() {
             className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           {form.errors.usageLimit && (
-            <p className="text-red-500 text-sm">{form.errors.usageLimit.message}</p>
+            <p className="text-red-500 text-sm">
+              {form.errors.usageLimit.message}
+            </p>
           )}
         </div>
 
@@ -144,7 +151,9 @@ export function CouponForm() {
             className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           {form.errors.usedCount && (
-            <p className="text-red-500 text-sm">{form.errors.usedCount.message}</p>
+            <p className="text-red-500 text-sm">
+              {form.errors.usedCount.message}
+            </p>
           )}
         </div>
 
@@ -162,7 +171,9 @@ export function CouponForm() {
             className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           {form.errors.validFrom && (
-            <p className="text-red-500 text-sm">{form.errors.validFrom.message}</p>
+            <p className="text-red-500 text-sm">
+              {form.errors.validFrom.message}
+            </p>
           )}
         </div>
 
@@ -180,7 +191,9 @@ export function CouponForm() {
             className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           {form.errors.validUntil && (
-            <p className="text-red-500 text-sm">{form.errors.validUntil.message}</p>
+            <p className="text-red-500 text-sm">
+              {form.errors.validUntil.message}
+            </p>
           )}
         </div>
 

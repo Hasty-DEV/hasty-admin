@@ -1,18 +1,35 @@
 import { format, isValid, parse } from 'date-fns';
+import { z } from 'zod';
 import {
   InsertCouponModel,
   ListedCouponModel,
 } from '../../data/model/Coupons.model';
-import { z } from 'zod';
 
 export const InsertCouponSchema = z.object({
   code: z.string().min(1),
   discountType: z.enum(['percentage', 'fixedAmount']),
-  discountValue: z.string().min(1).transform(val => Number(val)),
-  minPurchaseValue: z.string().optional().nullable().transform(val => Number(val)),
-  maxDiscountValue: z.string().optional().nullable().transform(val => Number(val)),
-  usageLimit: z.string().optional().transform(val => Number(val)),
-  usedCount: z.string().min(0).transform(val => Number(val)),
+  discountValue: z
+    .string()
+    .min(1)
+    .transform((val) => Number(val)),
+  minPurchaseValue: z
+    .string()
+    .optional()
+    .nullable()
+    .transform((val) => Number(val)),
+  maxDiscountValue: z
+    .string()
+    .optional()
+    .nullable()
+    .transform((val) => Number(val)),
+  usageLimit: z
+    .string()
+    .optional()
+    .transform((val) => Number(val)),
+  usedCount: z
+    .string()
+    .min(0)
+    .transform((val) => Number(val)),
   isActive: z.boolean().optional(),
   validFrom: z.string().min(1),
   validUntil: z.string().optional().nullable(),
@@ -32,17 +49,17 @@ export class InsertCoupon {
 
   private static formatDate(dateString: string): string {
     const parsedDate = parse(dateString, 'yyyy/MM/dd', new Date());
-  
+
     if (!isValid(parsedDate)) {
       const correctedDate = parse(dateString, 'yyyy-MM-dd', new Date());
-  
+
       if (isValid(correctedDate)) {
         return format(correctedDate, 'yyyy-MM-dd');
       }
-      
+
       return 'Data inválida';
     }
-  
+
     return format(parsedDate, 'yyyy-MM-dd');
   }
 
