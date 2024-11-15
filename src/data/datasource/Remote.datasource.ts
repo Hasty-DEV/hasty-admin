@@ -6,7 +6,7 @@ import axios, {
   HttpStatusCode,
 } from 'axios';
 import { z } from 'zod';
-import { Result } from '../utils/Result';
+import { Result } from '../../utils/Result';
 
 export type SerializeSchemas =
   | z.ZodObject<any>
@@ -100,6 +100,10 @@ export class RemoteDataSource {
         return Result.Error({ code: 'UNAUTHORIZED' });
       case HttpStatusCode.NotFound:
         return Result.Error({ code: 'NOT_FOUND' });
+      case HttpStatusCode.BadRequest:
+        return Result.Error({ code: 'BAD_REQUEST' });
+      case HttpStatusCode.Conflict:
+        return Result.Error({ code: 'ALREADY_EXISTS' });
     }
   }
 }

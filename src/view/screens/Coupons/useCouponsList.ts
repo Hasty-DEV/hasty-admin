@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ListedCoupon } from "../../../domain/entities/Coupon.entity";
 import { UseCases } from "../../../domain/usecases/UseCases";
 
-export function useListAllCoupons() {
+export function useCouponsList() {
     const [coupons, setCoupons] = useState<ListedCoupon[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
   

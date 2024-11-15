@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { isAxiosError } from 'axios';
-import { RemoteDataSource } from '../data/Remote.datasource';
+import { RemoteDataSource } from '../data/datasource/Remote.datasource';
 import { Http } from '../domain/HttpClient';
 import { Result } from './Result';
 
@@ -26,7 +26,7 @@ export function ExceptionHandler() {
         }
 
         if (isAxiosError(error)) {
-          RemoteDataSource.checkError(error);
+          return RemoteDataSource.checkError(error);
         }
 
         console.error(error);
