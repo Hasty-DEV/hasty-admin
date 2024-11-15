@@ -1,21 +1,21 @@
 import { CouponRepository } from '../../../data/repositories/Coupons.repository';
 import { DefaultResultError, Result } from '../../../utils/Result';
 import { UseCase } from '../../../utils/UseCase';
-import { ListedCoupon } from '../../entities/Coupon.entity';
+import { ListCoupon, ListedCoupon } from '../../entities/Coupon.entity';
 
-export type ListReq = object;
+export type ListReq = ListCoupon;
 
 export type ListRes = Promise<
-  Result<ListedCoupon[], { code: 'SERIALIZATION' } | DefaultResultError>
+  Result<ListedCoupon, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
-export type ListAllCouponsUseCase = UseCase<ListReq, ListRes>;
+export type ListOneCouponsUseCase = UseCase<ListReq, ListRes>;
 
-export class ListAllCouponsUseCaseImpl implements ListAllCouponsUseCase {
+export class ListOneCouponsUseCaseImpl implements ListOneCouponsUseCase {
   constructor(private repository: CouponRepository) {}
 
-  async execute(): ListRes {
-    const { result } = await this.repository.listAll({});
+  async execute(req: ListReq): ListRes {
+    const { result } = await this.repository.listOne(req);
 
     if (result.type === 'ERROR') {
       switch (result.error.code) {
@@ -26,8 +26,6 @@ export class ListAllCouponsUseCaseImpl implements ListAllCouponsUseCase {
       }
     }
 
-    return Result.Success(
-      result.data.map((item) => ListedCoupon.fromModel(item)),
-    );
+    return Result.Success(ListedCoupon.fromModel(result.data));
   }
 }

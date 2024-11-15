@@ -116,9 +116,12 @@ export class InsertCoupon {
 
 export class InsertedCoupon {}
 
-export class ListAllCoupons {}
+export class ListCoupon {
+  id!: string;
+}
 
 export class ListedCoupon {
+  id!: string;
   code!: string;
   discountType!: 'percentage' | 'fixedAmount';
   discountValue!: number;
@@ -131,6 +134,8 @@ export class ListedCoupon {
 
   public static fromModel(model: ListedCouponModel): ListedCoupon {
     const entity = new ListedCoupon();
+
+    entity.id = model.id;
 
     entity.code = model.code;
 

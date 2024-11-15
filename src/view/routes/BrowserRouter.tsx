@@ -19,6 +19,11 @@ const CouponsForm = lazy(() =>
     default: module.CouponForm,
   })),
 );
+const CouponDetails = lazy(() =>
+  import('../screens/Coupons/CouponDetails').then((module) => ({
+    default: module.CouponDetails,
+  })),
+);
 
 export function BrowserRouter() {
   return (
@@ -38,6 +43,7 @@ export function BrowserRouter() {
               path={ROUTES.coupons.create.call()}
               element={<CouponsForm />}
             />
+            <Route path="/coupons/details/:id" element={<CouponDetails />} />
           </Route>
         </Routes>
       </Suspense>

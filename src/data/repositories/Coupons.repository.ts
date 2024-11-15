@@ -5,7 +5,7 @@ import { RemoteDataSource } from '../datasource/Remote.datasource';
 import {
   InsertCouponModel,
   InsertedCouponModel,
-  ListAllCouponsModel,
+  ListCouponsModel,
   ListedCouponModel,
 } from '../model/Coupons.model';
 
@@ -20,13 +20,19 @@ export type InsertRes = Promise<
   >
 >;
 
-export type ListALLReq = ListAllCouponsModel;
+export type ListALLReq = object;
 export type ListALLRes = Promise<
   Result<ListedCouponModel[], { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
+export type ListOneReq = ListCouponsModel;
+export type ListOneRes = Promise<
+  Result<ListedCouponModel, { code: 'SERIALIZATION' } | DefaultResultError>
+>;
+
 export interface CouponRepository {
   listAll(req: ListALLReq): ListALLRes;
+  listOne(req: ListOneReq): ListOneRes;
   insert(req: InsertReq): InsertRes;
 }
 
@@ -38,6 +44,20 @@ export class CouponRepositoryImpl implements CouponRepository {
     const result = await this.api.get({
       url: `/coupons/list-all`,
       model: z.array(ListedCouponModel),
+    });
+
+    if (!result) {
+      return Result.Error({ code: 'SERIALIZATION' });
+    }
+
+    return Result.Success(result);
+  }
+
+  @ExceptionHandler()
+  async listOne(req: ListOneReq): ListOneRes {
+    const result = await this.api.get({
+      url: `/coupons/list/${req.id}`,
+      model: ListedCouponModel,
     });
 
     if (!result) {

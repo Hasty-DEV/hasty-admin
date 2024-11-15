@@ -18,9 +18,12 @@ export const InsertedCouponModel = z.object({
 });
 export type InsertedCouponModel = z.infer<typeof InsertedCouponModel>;
 
-export class ListAllCouponsModel {}
+export class ListCouponsModel {
+  id!: string;
+}
 
 export const ListedCouponModel = z.object({
+  id: z.string().min(1),
   code: z.string().min(1),
   discountType: z.enum(['percentage', 'fixedAmount']),
   discountValue: z.number(),
