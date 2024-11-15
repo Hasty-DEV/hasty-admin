@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { isAxiosError } from 'axios';
-import { Result } from './Result';
 import { RemoteDataSource } from '../data/Remote.datasource';
 import { Http } from '../domain/HttpClient';
+import { Result } from './Result';
 
 export function ExceptionHandler() {
   return function (

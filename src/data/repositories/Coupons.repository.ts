@@ -7,9 +7,7 @@ import { RemoteDataSource } from '../Remote.datasource';
 export type ListALLReq = ListAllCouponsModel;
 
 export type ListALLRes = Promise<
-  Result<
-  ListedCouponModel[], { code: 'SERIALIZATION' } | DefaultResultError
-  >
+  Result<ListedCouponModel[], { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export interface CouponRepository {

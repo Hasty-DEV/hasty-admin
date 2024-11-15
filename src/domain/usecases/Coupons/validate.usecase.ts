@@ -20,12 +20,14 @@ export class ListAllCouponsUseCaseImpl implements ListAllCouponsUseCase {
     if (result.type === 'ERROR') {
       switch (result.error.code) {
         case 'SERIALIZATION':
-          return Result.Error({ code: 'SERIALIZATION' })
+          return Result.Error({ code: 'SERIALIZATION' });
         default:
           return Result.Error({ code: 'UNKNOWN' });
       }
     }
 
-    return Result.Success(result.data.map(item => ListedCoupon.fromModel(item)));
+    return Result.Success(
+      result.data.map((item) => ListedCoupon.fromModel(item)),
+    );
   }
 }

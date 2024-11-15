@@ -1,4 +1,4 @@
-import { ListedCouponModel } from "../../data/model/Coupons.model";
+import { ListedCouponModel } from '../../data/model/Coupons.model';
 
 export class ListAllCoupons {}
 
@@ -33,7 +33,6 @@ export class ListedCoupon {
     entity.usageLimit = model.usageLimit;
 
     entity.usedCount = model.usedCount;
-
 
     return entity;
   }
