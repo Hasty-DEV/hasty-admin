@@ -7,7 +7,8 @@ export function CouponsList() {
   return (
     <>
       {loading && <Loader />}
-      <div className="pt-20 px-8 overflow-x-auto">
+      <h1 className="text-2xl font-bold text-center pb-2">Listagem de Cupom</h1>
+      <div className="p-8 overflow-x-auto">
         <table className="min-w-full table-auto rounded-sm">
           <thead className="bg-blue-500 text-white">
             <tr>
