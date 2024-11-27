@@ -4,8 +4,11 @@ import { Link, Outlet } from 'react-router-dom';
 import { ROUTES } from '../routes/Routes';
 
 export function DefaultLayout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isCouponsDropdownOpen, setIsCouponsDropdownOpen] = useState(false); // Estado para o dropdown
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [isCouponsDropdownOpen, setIsCouponsDropdownOpen] =
+    useState<boolean>(false);
+  const [isNewsletterDropdownOpen, setIsNewsletterDropdownOpen] =
+    useState<boolean>(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -13,6 +16,10 @@ export function DefaultLayout() {
 
   const toggleCouponsDropdown = () => {
     setIsCouponsDropdownOpen(!isCouponsDropdownOpen);
+  };
+
+  const toggleNewsletterDropdown = () => {
+    setIsNewsletterDropdownOpen(!isNewsletterDropdownOpen);
   };
 
   return (
@@ -54,6 +61,28 @@ export function DefaultLayout() {
                 </Link>
                 <Link
                   to={ROUTES.coupons.listAll.call()}
+                  className="block text-white hover:text-gray-300"
+                >
+                  Listar Todos
+                </Link>
+              </div>
+            )}
+          </div>
+          <div>
+            <button
+              onClick={toggleNewsletterDropdown}
+              className="flex items-center space-x-2 text-white hover:text-gray-300 w-full"
+            >
+              <FaTag />
+              {isSidebarOpen && <span>Newsletter</span>}
+              <FaCaretDown
+                className={`ml-2 transition-transform ${isNewsletterDropdownOpen ? 'rotate-180' : ''}`}
+              />
+            </button>
+            {isNewsletterDropdownOpen && (
+              <div className="ml-6 space-y-2 mt-2 transition-all duration-300 ease-in-out">
+                <Link
+                  to={ROUTES.newsletter.listAll.call()}
                   className="block text-white hover:text-gray-300"
                 >
                   Listar Todos

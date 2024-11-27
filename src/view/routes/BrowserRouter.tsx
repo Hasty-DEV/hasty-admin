@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 import { Loader } from '../components/Loader';
 import { DefaultLayout } from '../layout/DefaultLayout';
+import { ListAllNewsletter } from '../screens/Newsletter/ListAllNewsletter';
 import { ROUTES } from './Routes';
 
 const CouponsList = lazy(() =>
@@ -31,19 +32,26 @@ export function BrowserRouter() {
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route
-            path={ROUTES.home.call()}
-            element={<Navigate to={ROUTES.coupons.listAll.call()} />}
+            path={ROUTES.home.path}
+            element={<Navigate to={ROUTES.coupons.listAll.path} />}
           />
-          <Route path={ROUTES.home.call()} element={<DefaultLayout />}>
+          <Route path={ROUTES.home.path} element={<DefaultLayout />}>
             <Route
-              path={ROUTES.coupons.listAll.call()}
+              path={ROUTES.coupons.listAll.path}
               element={<CouponsList />}
             />
             <Route
-              path={ROUTES.coupons.create.call()}
+              path={ROUTES.coupons.create.path}
               element={<CouponsForm />}
             />
-            <Route path="/coupons/details/:id" element={<CouponDetails />} />
+            <Route
+              path={ROUTES.coupons.details.path}
+              element={<CouponDetails />}
+            />
+            <Route
+              path={ROUTES.newsletter.listAll.path}
+              element={<ListAllNewsletter />}
+            />
           </Route>
         </Routes>
       </Suspense>
