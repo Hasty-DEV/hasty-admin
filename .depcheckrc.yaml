@@ -1,0 +1,12 @@
+ignores:
+  [
+    '@commitlint/*',
+    'commitizen',
+    'depcheck',
+    'prettier',
+    'prettier-*',
+    'autoprefixer',
+    'postcss',
+    'tailwindcss',
+  ]
+skip-missing: true
