@@ -1,100 +1,66 @@
 import { useState } from 'react';
-import { FaBars, FaCaretDown, FaHome, FaTag } from 'react-icons/fa';
-import { Link, Outlet } from 'react-router-dom';
+import { CiMail } from 'react-icons/ci';
+import { FaHome, FaTag } from 'react-icons/fa';
+import { Outlet, useLocation } from 'react-router-dom';
 import { ROUTES } from '../routes/Routes';
+import Header from './Header/Header';
+import { Sidebar } from './Sidebar/Sidebar';
 
 export function DefaultLayout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
-  const [isCouponsDropdownOpen, setIsCouponsDropdownOpen] =
-    useState<boolean>(false);
-  const [isNewsletterDropdownOpen, setIsNewsletterDropdownOpen] =
-    useState<boolean>(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const toggleCouponsDropdown = () => {
-    setIsCouponsDropdownOpen(!isCouponsDropdownOpen);
-  };
-
-  const toggleNewsletterDropdown = () => {
-    setIsNewsletterDropdownOpen(!isNewsletterDropdownOpen);
-  };
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const { pathname } = useLocation();
 
   return (
-    <div className="flex min-h-screen">
-      <aside
-        className={`transition-all duration-300 bg-slate-800 p-5 ${isSidebarOpen ? 'w-64' : 'w-16'} overflow-hidden`}
-      >
-        <div className="flex md:hidden justify-between items-center mb-5">
-          <button onClick={toggleSidebar} className="text-white text-2xl">
-            <FaBars />
-          </button>
+    <div className="dark:bg-boxdark-2 dark:text-bodydark">
+      <div className="flex h-screen overflow-hidden">
+        <Sidebar
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+          items={[
+            {
+              type: 'link',
+              icon: <FaHome />,
+              path: ROUTES.home.call(),
+              label: 'Home',
+            },
+            {
+              type: 'dropdown',
+              icon: <FaTag />,
+              label: 'Cupons',
+              activeCondition: pathname === '/' || pathname.includes('coupons'),
+              dropItems: [
+                {
+                  path: ROUTES.coupons.create.call(),
+                  label: 'Criar',
+                },
+                {
+                  path: ROUTES.coupons.listAll.call(),
+                  label: 'Listar Todos',
+                },
+              ],
+            },
+            {
+              type: 'dropdown',
+              icon: <CiMail />,
+              label: 'Newsletter',
+              activeCondition: pathname.includes('newsletter'),
+              dropItems: [
+                {
+                  path: ROUTES.newsletter.listAll.call(),
+                  label: 'Listar Todos',
+                },
+              ],
+            },
+          ]}
+        />
+        <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          <main>
+            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+              <Outlet />
+            </div>
+          </main>
         </div>
-        <nav className="space-y-4">
-          <Link
-            to={ROUTES.home.call()}
-            className="flex items-center space-x-2 text-white hover:text-gray-300"
-          >
-            <FaHome />
-            {isSidebarOpen && <span>Home</span>}
-          </Link>
-          <div>
-            <button
-              onClick={toggleCouponsDropdown}
-              className="flex items-center space-x-2 text-white hover:text-gray-300 w-full"
-            >
-              <FaTag />
-              {isSidebarOpen && <span>Cupons</span>}
-              <FaCaretDown
-                className={`ml-2 transition-transform ${isCouponsDropdownOpen ? 'rotate-180' : ''}`}
-              />
-            </button>
-            {isCouponsDropdownOpen && (
-              <div className="ml-6 space-y-2 mt-2 transition-all duration-300 ease-in-out">
-                <Link
-                  to={ROUTES.coupons.create.call()}
-                  className="block text-white hover:text-gray-300"
-                >
-                  Criar
-                </Link>
-                <Link
-                  to={ROUTES.coupons.listAll.call()}
-                  className="block text-white hover:text-gray-300"
-                >
-                  Listar Todos
-                </Link>
-              </div>
-            )}
-          </div>
-          <div>
-            <button
-              onClick={toggleNewsletterDropdown}
-              className="flex items-center space-x-2 text-white hover:text-gray-300 w-full"
-            >
-              <FaTag />
-              {isSidebarOpen && <span>Newsletter</span>}
-              <FaCaretDown
-                className={`ml-2 transition-transform ${isNewsletterDropdownOpen ? 'rotate-180' : ''}`}
-              />
-            </button>
-            {isNewsletterDropdownOpen && (
-              <div className="ml-6 space-y-2 mt-2 transition-all duration-300 ease-in-out">
-                <Link
-                  to={ROUTES.newsletter.listAll.call()}
-                  className="block text-white hover:text-gray-300"
-                >
-                  Listar Todos
-                </Link>
-              </div>
-            )}
-          </div>
-        </nav>
-      </aside>
-
-      <div className="flex-1 p-8">
-        <Outlet />
       </div>
     </div>
   );

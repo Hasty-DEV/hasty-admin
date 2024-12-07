@@ -2,7 +2,7 @@
   "name": "hasty-admin",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
   // "features": {},
-  "forwardPorts": [5173],
+  "forwardPorts": [3002],
   "postCreateCommand": "npm install && git config --global --add safe.directory /workspaces/hasty-admin",
   "customizations": {
     "vscode": {
