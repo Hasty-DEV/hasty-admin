@@ -14,7 +14,8 @@ export function ListAllNewsletter() {
       const { result } = await UseCases.newsletter.listAll.execute();
 
       if (result.type === 'ERROR') {
-        alert('ERRO AO BUSCAR CUPONS');
+        console.log(result);
+        alert('ERRO AO BUSCAR NEWSLETTER');
         return;
       }
 
