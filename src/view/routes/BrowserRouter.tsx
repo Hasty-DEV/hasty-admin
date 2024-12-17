@@ -1,12 +1,15 @@
-import { Suspense, lazy } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import {
   Navigate,
   Route,
   BrowserRouter as Router,
   Routes,
 } from 'react-router-dom';
+import { auth } from '../../data/datasource/Firebase.datasource';
 import { Loader } from '../components/Loader';
 import { DefaultLayout } from '../layout/DefaultLayout';
+import { SignIn } from '../screens/Auth/SignIn';
 import { ListAllNewsletter } from '../screens/Newsletter/ListAllNewsletter';
 import { ROUTES } from './Routes';
 
@@ -27,32 +30,61 @@ const CouponDetails = lazy(() =>
 );
 
 export function BrowserRouter() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <Router>
       <Suspense fallback={<Loader />}>
         <Routes>
-          <Route
-            path={ROUTES.home.path}
-            element={<Navigate to={ROUTES.coupons.listAll.path} />}
-          />
-          <Route path={ROUTES.home.path} element={<DefaultLayout />}>
-            <Route
-              path={ROUTES.coupons.listAll.path}
-              element={<CouponsList />}
-            />
-            <Route
-              path={ROUTES.coupons.create.path}
-              element={<CouponsForm />}
-            />
-            <Route
-              path={ROUTES.coupons.details.path}
-              element={<CouponDetails />}
-            />
-            <Route
-              path={ROUTES.newsletter.listAll.path}
-              element={<ListAllNewsletter />}
-            />
-          </Route>
+          {!isAuthenticated && (
+            <>
+              <Route
+                path={ROUTES.home.path}
+                element={<Navigate to="/sign-in" />}
+              />
+              <Route path="/sign-in" element={<SignIn />} />
+              <Route path="*" element={<Navigate to="/sign-in" />} />
+            </>
+          )}
+          {isAuthenticated && (
+            <>
+              <Route
+                path={ROUTES.home.path}
+                element={<Navigate to={ROUTES.coupons.listAll.path} />}
+              />
+              <Route path={ROUTES.home.path} element={<DefaultLayout />}>
+                <Route
+                  path={ROUTES.coupons.listAll.path}
+                  element={<CouponsList />}
+                />
+                <Route
+                  path={ROUTES.coupons.create.path}
+                  element={<CouponsForm />}
+                />
+                <Route
+                  path={ROUTES.coupons.details.path}
+                  element={<CouponDetails />}
+                />
+                <Route
+                  path={ROUTES.newsletter.listAll.path}
+                  element={<ListAllNewsletter />}
+                />
+                <Route path="*" element={<Navigate to={ROUTES.home.path} />} />
+              </Route>
+            </>
+          )}
         </Routes>
       </Suspense>
     </Router>
