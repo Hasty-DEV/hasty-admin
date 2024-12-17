@@ -70,7 +70,7 @@ export function SignUp() {
                 Comece gratuitamente
               </span>
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-                Cadastre-se no TailAdmin
+                Cadastre-se na HastyDEV
               </h2>
 
               <form onSubmit={handleSubmit}>
