@@ -10,6 +10,7 @@ import { auth } from '../../data/datasource/Firebase.datasource';
 import { Loader } from '../components/Loader';
 import { DefaultLayout } from '../layout/DefaultLayout';
 import { SignIn } from '../screens/Auth/SignIn';
+import { SignUp } from '../screens/Auth/SignUp';
 import { ListAllNewsletter } from '../screens/Newsletter/ListAllNewsletter';
 import { ROUTES } from './Routes';
 
@@ -55,7 +56,7 @@ export function BrowserRouter() {
                 element={<Navigate to="/sign-in" />}
               />
               <Route path="/sign-in" element={<SignIn />} />
-              <Route path="*" element={<Navigate to="/sign-in" />} />
+              <Route path="/sign-up" element={<SignUp />} />
             </>
           )}
           {isAuthenticated && (
