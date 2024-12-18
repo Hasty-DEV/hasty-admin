@@ -1,57 +1,11 @@
-import { useState } from 'react';
 import { FaGoogle } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
-import { UseCases } from '../../../domain/usecases/UseCases';
-import AuthImage from '../../assets/AuthImage.svg';
-import Logo from '../../assets/logo/logo-light.svg';
+import { Link } from 'react-router-dom';
+import AuthImage from '../../../assets/AuthImage.svg';
+import Logo from '../../../assets/logo/logo-light.svg';
+import { useSignIn } from './useSignIn';
 
 export function SignIn() {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
-
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      const { result } = await UseCases.auth.signIn.execute({
-        email,
-        password,
-      });
-
-      if (result.type === 'ERROR') {
-        return;
-      }
-
-      if (result.data.token) {
-        console.log(result.data.token);
-        alert('Usuário autenticado com sucesso');
-        navigate('/');
-      }
-    } catch (error) {
-      setError('Erro ao autenticar. Verifique suas credenciais.');
-      console.error('Erro ao autenticar', error);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      const { result } = await UseCases.auth.googleSignIn.execute();
-
-      if (result.type === 'ERROR') {
-        return;
-      }
-      if (result.data.token) {
-        console.log(result.data.token);
-        alert('Usuário autenticado com Google com sucesso');
-        navigate('/');
-      }
-    } catch (error) {
-      setError('Erro ao autenticar com Google.');
-      console.error('Erro ao autenticar com Google', error);
-    }
-  };
+  const { error, errors, register, onsubmit, handleGoogleSignIn } = useSignIn();
 
   return (
     <main className="h-screen flex items-center justify-center">
@@ -81,7 +35,7 @@ export function SignIn() {
                 Entre no HastyDev
               </h2>
 
-              <form onSubmit={handleSignIn}>
+              <form onSubmit={onsubmit}>
                 {error && <div className="text-red-500 mb-4">{error}</div>}
 
                 <div className="mb-4">
@@ -91,11 +45,17 @@ export function SignIn() {
                   <div className="relative">
                     <input
                       type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      {...register('email', {
+                        required: 'Email é obrigatório',
+                      })}
                       placeholder="Digite seu email"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
+                    {errors.email && (
+                      <p className="text-red-500 text-sm">
+                        {errors.email.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -106,11 +66,17 @@ export function SignIn() {
                   <div className="relative">
                     <input
                       type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      {...register('password', {
+                        required: 'Senha é obrigatória',
+                      })}
                       placeholder="Digite sua senha"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
+                    {errors.password && (
+                      <p className="text-red-500 text-sm">
+                        {errors.password.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
