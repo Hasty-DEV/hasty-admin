@@ -1,12 +1,7 @@
-import {
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-} from 'firebase/auth';
 import { useState } from 'react';
 import { FaGoogle } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-import { auth } from '../../../data/datasource/Firebase.datasource';
+import { UseCases } from '../../../domain/usecases/UseCases';
 import AuthImage from '../../assets/AuthImage.svg';
 import Logo from '../../assets/logo/logo-light.svg';
 
@@ -20,16 +15,17 @@ export function SignIn() {
     e.preventDefault();
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
+      const { result } = await UseCases.auth.signIn.execute({
         email,
         password,
-      );
+      });
 
-      const token = await userCredential.user.getIdToken();
+      if (result.type === 'ERROR') {
+        return;
+      }
 
-      if (token) {
-        console.log(token);
+      if (result.data.token) {
+        console.log(result.data.token);
         alert('Usuário autenticado com sucesso');
         navigate('/');
       }
@@ -40,14 +36,14 @@ export function SignIn() {
   };
 
   const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-
     try {
-      const result = await signInWithPopup(auth, provider);
-      const token = await result.user.getIdToken();
+      const { result } = await UseCases.auth.googleSignIn.execute();
 
-      if (token) {
-        console.log(token);
+      if (result.type === 'ERROR') {
+        return;
+      }
+      if (result.data.token) {
+        console.log(result.data.token);
         alert('Usuário autenticado com Google com sucesso');
         navigate('/');
       }
