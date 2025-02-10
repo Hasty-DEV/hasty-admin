@@ -5,10 +5,13 @@ import {
   InsertCoupon,
   InsertCouponSchema,
 } from '../../../domain/entities/Coupon.entity';
-import { UseCases } from '../../../domain/usecases/UseCases';
 
 export function useCouponForm() {
   const [loading, setLoading] = useState<boolean>(false);
+  const API_URL = String(import.meta.env.VITE_API_URL);
+  const API_URL_ALFRED = String(import.meta.env.VITE_API_ALFRED);
+
+  const [selectedType, setSelectedType] = useState<'alfred' | 'diyseclab'>();
 
   const form = useForm<InsertCoupon>({
     resolver: zodResolver(InsertCouponSchema),
@@ -23,7 +26,28 @@ export function useCouponForm() {
   const onSubmit = async (data: InsertCoupon) => {
     setLoading(true);
     try {
-      const { result } = await UseCases.coupon.insert.execute(data);
+      const apiUrl = selectedType === 'alfred' ? API_URL_ALFRED : API_URL;
+
+      if (!apiUrl) {
+        throw new Error('API URL não definida');
+      }
+
+      console.log('URL da API:', apiUrl);
+      console.log('Dados enviados:', data);
+
+      const response = await fetch(`${apiUrl}/coupons/insert`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro HTTP! status: ${response.status}`);
+      }
+
+      const result = await response.json();
 
       if (result.type === 'ERROR') {
         switch (result.error.code) {
@@ -37,6 +61,9 @@ export function useCouponForm() {
       }
 
       alert('CUPOM CRIADO COM SUCESSO');
+    } catch (error) {
+      console.error('Erro ao enviar o cupom:', error);
+      alert('Erro ao enviar o cupom.');
     } finally {
       setLoading(false);
     }
@@ -44,6 +71,8 @@ export function useCouponForm() {
 
   return {
     loading,
+    selectedType,
+    setSelectedType,
     form: {
       errors,
       register,

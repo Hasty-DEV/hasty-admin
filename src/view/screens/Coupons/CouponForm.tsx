@@ -1,13 +1,25 @@
 import { useCouponForm } from './useCouponForm';
 
 export function CouponForm() {
-  const { form } = useCouponForm();
+  const { form, selectedType, setSelectedType } = useCouponForm();
 
   return (
     <div className="w-full p-6">
       <h1 className="text-2xl font-bold text-center pb-2">
         Formulário de Cupom
       </h1>
+      <select
+        id="couponType"
+        value={selectedType}
+        onChange={(e) =>
+          setSelectedType(e.target.value as 'alfred' | 'diyseclab')
+        }
+        className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      >
+        <option value="">Selecione o tipo de cupom</option>
+        <option value="alfred">Alfred</option>
+        <option value="diyseclab">DIY Sec Lab</option>
+      </select>
       <form
         onSubmit={form.onsubmit}
         className="grid grid-cols-12 gap-x-4 gap-y-6"
