@@ -65,53 +65,23 @@ export class InsertCoupon {
   }
 
   public static toModel(entity: InsertCoupon): InsertCouponModel {
-    const model = new InsertCouponModel();
+    const couponModel = new InsertCouponModel();
 
-    model.code = entity.code;
+    couponModel.code = entity.code;
+    couponModel.discountType = entity.discountType;
+    couponModel.discountValue = entity.discountValue;
+    couponModel.minPurchaseValue = entity.minPurchaseValue || null;
+    couponModel.maxDiscountValue = entity.maxDiscountValue || null;
+    couponModel.usageLimit = entity.usageLimit || null;
+    couponModel.usedCount = entity.usedCount;
+    couponModel.isActive = true;
+    couponModel.validFrom = this.formatDate(entity.validFrom);
+    couponModel.validUntil =
+      entity.validUntil && entity.validUntil.trim() !== ''
+        ? this.formatDate(entity.validUntil)
+        : '2125-02-05';
 
-    model.discountType = entity.discountType;
-
-    model.discountValue = entity.discountValue;
-
-    if (entity.minPurchaseValue === 0) {
-      model.minPurchaseValue = null;
-    }
-
-    if (entity.minPurchaseValue !== 0) {
-      model.minPurchaseValue = entity.minPurchaseValue;
-    }
-
-    if (entity.maxDiscountValue === 0) {
-      model.maxDiscountValue = null;
-    }
-
-    if (entity.maxDiscountValue !== 0) {
-      model.maxDiscountValue = entity.maxDiscountValue;
-    }
-
-    if (entity.usageLimit === 0) {
-      model.usageLimit = null;
-    }
-
-    if (entity.usageLimit !== 0) {
-      model.usageLimit = entity.usageLimit;
-    }
-
-    model.usedCount = entity.usedCount;
-
-    model.isActive = true;
-
-    model.validFrom = this.formatDate(entity.validFrom);
-
-    if (entity.validUntil) {
-      model.validUntil = this.formatDate(entity.validUntil);
-    }
-
-    if (!entity.validUntil || entity.validUntil === '') {
-      model.validUntil = null;
-    }
-
-    return model;
+    return couponModel;
   }
 }
 
@@ -133,28 +103,19 @@ export class ListedCoupon {
   usedCount!: number;
   isActive?: boolean;
 
-  public static fromModel(model: ListedCouponModel): ListedCoupon {
+  public static fromModel(couponModel: ListedCouponModel): ListedCoupon {
     const entity = new ListedCoupon();
 
-    entity.id = model.id;
-
-    entity.code = model.code;
-
-    entity.discountType = model.discountType;
-
-    entity.validUntil = model.validUntil;
-
-    entity.discountValue = model.discountValue;
-
-    entity.isActive = model.isActive;
-
-    entity.maxDiscountValue = model.maxDiscountValue;
-
-    entity.minPurchaseValue = model.minPurchaseValue;
-
-    entity.usageLimit = model.usageLimit;
-
-    entity.usedCount = model.usedCount;
+    entity.id = couponModel.id;
+    entity.code = couponModel.code;
+    entity.discountType = couponModel.discountType;
+    entity.validUntil = couponModel.validUntil;
+    entity.discountValue = couponModel.discountValue;
+    entity.isActive = couponModel.isActive;
+    entity.maxDiscountValue = couponModel.maxDiscountValue;
+    entity.minPurchaseValue = couponModel.minPurchaseValue;
+    entity.usageLimit = couponModel.usageLimit;
+    entity.usedCount = couponModel.usedCount;
 
     return entity;
   }
@@ -169,13 +130,11 @@ export class ToggledCouponStatus {
   isActive!: boolean;
 
   public static fromModel(
-    model: ToggledCouponStatusModel,
+    couponModel: ToggledCouponStatusModel,
   ): ToggledCouponStatus {
     const entity = new ToggledCouponStatus();
-
-    entity.code = model.code;
-
-    entity.isActive = model.isActive;
+    entity.code = couponModel.code;
+    entity.isActive = couponModel.isActive;
     return entity;
   }
 }
