@@ -76,6 +76,7 @@ export function CouponForm() {
             type="number"
             {...form.register('discountValue')}
             min="0" // Adiciona a restrição de números >= 0
+            step="any"
             className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           {form.errors.discountValue && (
