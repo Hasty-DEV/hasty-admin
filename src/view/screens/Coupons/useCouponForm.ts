@@ -33,14 +33,23 @@ export function useCouponForm() {
       }
 
       console.log('URL da API:', apiUrl);
-      console.log('Dados enviados:', data);
+      console.log('Dados do formulário antes de transformar:', data);
+
+      const transformedData = InsertCoupon.toModel(data);
+
+      if (
+        !transformedData.validUntil ||
+        transformedData.validUntil.trim() === ''
+      ) {
+        transformedData.validUntil = '2125-02-05';
+      }
 
       const response = await fetch(`${apiUrl}/coupons/insert`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...transformedData, isActive: true }),
       });
 
       if (!response.ok) {
@@ -48,8 +57,10 @@ export function useCouponForm() {
       }
 
       const result = await response.json();
+      console.log('Resposta da API:', result);
 
       if (result.type === 'ERROR') {
+        console.error('Erro retornado pela API:', result);
         switch (result.error.code) {
           case 'ALREADY_EXISTS':
             alert('CUPOM JÁ EXISTE!');
