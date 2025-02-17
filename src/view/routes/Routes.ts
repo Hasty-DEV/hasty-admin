@@ -23,4 +23,8 @@ export const ROUTES = {
       call: () => '/newsletter/list-all',
     },
   },
+  report: {
+    call: () => '/report',
+    path: '/report',
+  },
 };
