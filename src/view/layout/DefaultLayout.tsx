@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CiMail } from 'react-icons/ci';
 import { FaHome, FaTag } from 'react-icons/fa';
+import { MdAssessment } from 'react-icons/md';
 import { Outlet, useLocation } from 'react-router-dom';
 import { ROUTES } from '../routes/Routes';
 import Header from './Header/Header';
@@ -50,6 +51,12 @@ export function DefaultLayout() {
                   label: 'Listar Todos',
                 },
               ],
+            },
+            {
+              type: 'link',
+              icon: <MdAssessment />,
+              label: 'Relatórios',
+              path: ROUTES.report.call(),
             },
           ]}
         />

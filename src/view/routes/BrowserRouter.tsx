@@ -12,6 +12,8 @@ import { DefaultLayout } from '../layout/DefaultLayout';
 import { SignIn } from '../screens/Auth/SignIn/SignIn';
 import { SignUp } from '../screens/Auth/SignUp';
 import { ListAllNewsletter } from '../screens/Newsletter/ListAllNewsletter';
+import { DepositDetail } from '../screens/Report/DepositDetail';
+import { Report } from '../screens/Report/Report';
 import { ROUTES } from './Routes';
 
 const CouponsList = lazy(() =>
@@ -82,6 +84,8 @@ export function BrowserRouter() {
                   path={ROUTES.newsletter.listAll.path}
                   element={<ListAllNewsletter />}
                 />
+                <Route path={ROUTES.report.path} element={<Report />} />
+                <Route path="/report/:depositId" element={<DepositDetail />} />
                 <Route path="*" element={<Navigate to={ROUTES.home.path} />} />
               </Route>
             </>
