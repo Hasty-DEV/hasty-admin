@@ -27,6 +27,7 @@ export const ListedCouponModel = z.object({
   code: z.string().min(1),
   discountType: z.enum(['percentage', 'fixedAmount']),
   discountValue: z.number(),
+  validFrom: z.string(),
   validUntil: z.string().optional(),
   minPurchaseValue: z.number().optional(),
   maxDiscountValue: z.number().optional(),
@@ -35,6 +36,14 @@ export const ListedCouponModel = z.object({
   isActive: z.boolean(),
 });
 export type ListedCouponModel = z.infer<typeof ListedCouponModel>;
+
+export const ListedAllCouponsModel = z.object({
+  data: z.array(ListedCouponModel),
+  page: z.number().nullable(),
+  limit: z.number().nullable(),
+  totalPages: z.number().nullable(),
+});
+export type ListedAllCouponsModel = z.infer<typeof ListedAllCouponsModel>;
 
 export class ToggleCouponStatusModel {
   id!: string;

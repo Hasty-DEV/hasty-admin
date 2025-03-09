@@ -5,29 +5,40 @@ import { UseCases } from '../../../domain/usecases/UseCases';
 export function useCouponsList() {
   const [coupons, setCoupons] = useState<ListedCoupon[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
-  const fetchCoupons = async () => {
+  const fetchCoupons = async (page: number, limit: number) => {
     setLoading(true);
     try {
-      const { result } = await UseCases.coupon.listAll.execute();
+      const { result } = await UseCases.coupon.listAll.execute({ page, limit });
 
       if (result.type === 'ERROR') {
         alert('ERRO AO BUSCAR CUPONS');
         return;
       }
 
-      setCoupons(result.data);
+      setCoupons(result.data.data);
+
+      if (result.data.totalPages) {
+        setTotalPages(result.data.totalPages ?? 1);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCoupons();
-  }, []);
+    fetchCoupons(currentPage, limit);
+  }, [currentPage, limit]);
 
   return {
     loading,
     coupons,
+    currentPage,
+    totalPages,
+    setCurrentPage,
+    setLimit,
   };
 }
