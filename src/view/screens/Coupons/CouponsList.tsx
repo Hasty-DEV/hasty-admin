@@ -145,12 +145,18 @@ export function CouponsList() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <div className="flex space-x-2">
-                          <button className="p-1 hover:bg-gray-100 rounded-full">
+                          <Link
+                            to={ROUTES.coupons.details.call(coupon.id)}
+                            className="p-1 hover:bg-gray-100 rounded-full"
+                          >
                             <Edit className="w-5 h-5 text-gray-600" />
-                          </button>
-                          <button className="p-1 hover:bg-gray-100 rounded-full">
+                          </Link>
+                          <Link
+                            to={ROUTES.coupons.details.call(coupon.id)}
+                            className="p-1 hover:bg-gray-100 rounded-full"
+                          >
                             <Trash2 className="w-5 h-5 text-red-600" />
-                          </button>
+                          </Link>
                         </div>
                       </td>
                     </tr>
