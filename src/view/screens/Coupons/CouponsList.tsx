@@ -132,7 +132,7 @@ export function CouponsList() {
                             <div
                               className="h-full bg-indigo-600 rounded-full"
                               style={{
-                                width: `${(coupon.usedCount / (coupon.usageLimit ?? 1)) * 100}%`,
+                                width: `${(coupon.usedCount / (coupon.usageLimit ?? 100000)) * 100}%`,
                               }}
                             />
                           </div>
