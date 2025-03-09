@@ -7,7 +7,7 @@ export function useCouponsList() {
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
-  // const [totalPages, setTotalPages] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
   const fetchCoupons = async (page: number, limit: number) => {
     setLoading(true);
@@ -19,11 +19,11 @@ export function useCouponsList() {
         return;
       }
 
-      setCoupons(result.data);
+      setCoupons(result.data.data);
 
-      // if (result.totalPages) {
-      //   setTotalPages(result.totalPages);
-      // }
+      if (result.data.totalPages) {
+        setTotalPages(result.data.totalPages ?? 1);
+      }
     } finally {
       setLoading(false);
     }
@@ -37,7 +37,7 @@ export function useCouponsList() {
     loading,
     coupons,
     currentPage,
-    // totalPages,
+    totalPages,
     setCurrentPage,
     setLimit,
   };

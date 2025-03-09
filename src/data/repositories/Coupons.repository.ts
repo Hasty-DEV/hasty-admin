@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { ExceptionHandler } from '../../utils/ExceptionHandler';
 import { DefaultResultError, Result } from '../../utils/Result';
 import { RemoteDataSource } from '../datasource/Remote.datasource';
@@ -6,6 +5,7 @@ import {
   InsertCouponModel,
   InsertedCouponModel,
   ListCouponsModel,
+  ListedAllCouponsModel,
   ListedCouponModel,
   ToggleCouponStatusModel,
   ToggledCouponStatusModel,
@@ -27,7 +27,7 @@ export type ListALLReq = {
   limit: number;
 };
 export type ListALLRes = Promise<
-  Result<ListedCouponModel[], { code: 'SERIALIZATION' } | DefaultResultError>
+  Result<ListedAllCouponsModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export type ListOneReq = ListCouponsModel;
@@ -72,7 +72,7 @@ export class CouponRepositoryImpl implements CouponRepository {
   async listAll(req: ListALLReq): ListALLRes {
     const result = await this.api.get({
       url: `/coupons/list-all?page=${req.page}&limit=${req.limit}`,
-      model: z.array(ListedCouponModel),
+      model: ListedAllCouponsModel,
     });
 
     if (!result) {

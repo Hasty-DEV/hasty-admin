@@ -2,6 +2,7 @@ import { format, isValid, parse } from 'date-fns';
 import { z } from 'zod';
 import {
   InsertCouponModel,
+  ListedAllCouponsModel,
   ListedCouponModel,
   ToggledCouponStatusModel,
 } from '../../data/model/Coupons.model';
@@ -89,6 +90,21 @@ export class InsertedCoupon {}
 
 export class ListCoupon {
   id!: string;
+}
+
+export class ListedAllCoupons {
+  data!: ListedCoupon[];
+  totalPages!: number | null;
+
+  public static fromModel(model: ListedAllCouponsModel): ListedAllCoupons {
+    const entity = new ListedAllCoupons();
+
+    entity.data = model.data.map((item) => ListedCoupon.fromModel(item));
+
+    entity.totalPages = model.totalPages;
+
+    return entity;
+  }
 }
 
 export class ListedCoupon {

@@ -14,7 +14,8 @@ import { ROUTES } from '../../routes/Routes';
 import { useCouponsList } from './useCouponsList';
 
 export function CouponsList() {
-  const { coupons, loading, currentPage, setCurrentPage } = useCouponsList();
+  const { coupons, loading, currentPage, totalPages, setCurrentPage } =
+    useCouponsList();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -163,7 +164,7 @@ export function CouponsList() {
             <div className="px-6 py-4 border-t border-gray-200">
               <div className="flex items-center justify-between">
                 <div className="text-sm text-gray-700">
-                  Página {currentPage} de {50}
+                  Página {currentPage} de {totalPages}
                 </div>
                 <div className="flex space-x-2">
                   <button
@@ -177,9 +178,9 @@ export function CouponsList() {
                   </button>
                   <button
                     onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, 50))
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                     }
-                    disabled={currentPage === 50}
+                    disabled={currentPage === totalPages}
                     className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ChevronRight className="w-5 h-5" />

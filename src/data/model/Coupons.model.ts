@@ -37,6 +37,14 @@ export const ListedCouponModel = z.object({
 });
 export type ListedCouponModel = z.infer<typeof ListedCouponModel>;
 
+export const ListedAllCouponsModel = z.object({
+  data: z.array(ListedCouponModel),
+  page: z.number().nullable(),
+  limit: z.number().nullable(),
+  totalPages: z.number().nullable(),
+});
+export type ListedAllCouponsModel = z.infer<typeof ListedAllCouponsModel>;
+
 export class ToggleCouponStatusModel {
   id!: string;
 }

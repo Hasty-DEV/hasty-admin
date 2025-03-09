@@ -1,7 +1,7 @@
 import { CouponRepository } from '../../../data/repositories/Coupons.repository';
 import { DefaultResultError, Result } from '../../../utils/Result';
 import { UseCase } from '../../../utils/UseCase';
-import { ListedCoupon } from '../../entities/Coupon.entity';
+import { ListedAllCoupons } from '../../entities/Coupon.entity';
 
 export type ListReq = {
   limit: number;
@@ -9,7 +9,7 @@ export type ListReq = {
 };
 
 export type ListRes = Promise<
-  Result<ListedCoupon[], { code: 'SERIALIZATION' } | DefaultResultError>
+  Result<ListedAllCoupons, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export type ListAllCouponsUseCase = UseCase<ListReq, ListRes>;
@@ -32,8 +32,6 @@ export class ListAllCouponsUseCaseImpl implements ListAllCouponsUseCase {
       }
     }
 
-    return Result.Success(
-      result.data.map((item) => ListedCoupon.fromModel(item)),
-    );
+    return Result.Success(ListedAllCoupons.fromModel(result.data));
   }
 }
