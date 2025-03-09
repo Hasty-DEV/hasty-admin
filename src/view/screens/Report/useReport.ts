@@ -1,5 +1,4 @@
-import { parse } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { ReportedDeposit } from '../../../domain/entities/Report.entity';
 import { UseCases } from '../../../domain/usecases/UseCases';
@@ -8,56 +7,57 @@ export function useReport() {
   const [deposits, setDeposits] = useState<ReportedDeposit[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
-  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [startDate, setStartDate] = useState<string | undefined>(undefined);
+  const [endDate, setEndDate] = useState<string | undefined>(undefined);
+  const [statusFilter, setStatusFilter] = useState<
+    'paid' | 'expired' | 'pending' | 'canceled' | undefined
+  >(undefined);
   const itemsPerPage = 10;
+  const [totalPages, setTotalPages] = useState<number>(1);
 
-  const fetchDeposit = async () => {
+  const fetchDeposit = useCallback(async () => {
     setLoading(true);
     try {
-      const { result } = await UseCases.report.deposit.execute();
+      const params: {
+        page: number;
+        pageSize: number;
+        status?: 'paid' | 'expired' | 'pending' | 'canceled';
+        startAt?: string;
+        endAt?: string;
+      } = {
+        page: currentPage,
+        pageSize: itemsPerPage,
+      };
+
+      if (statusFilter !== undefined) {
+        params.status = statusFilter;
+      }
+      if (startDate !== undefined) {
+        params.startAt = startDate;
+      }
+      if (endDate !== undefined) {
+        params.endAt = endDate;
+      }
+
+      const { result } = await UseCases.report.deposit.execute(params);
 
       if (result.type === 'ERROR') {
         console.error(result);
-        alert('ERRO AO BUSCAR DEPOSIT');
+        alert('Erro ao buscar depósitos.');
         return;
       }
-
-      setDeposits(result.data);
+      setDeposits(result.data.data);
+      setTotalPages(result.data.totalPages ?? 1);
+    } catch (error) {
+      console.error('Erro ao buscar depósitos:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, startDate, endDate, statusFilter]);
 
-  const getFilteredDeposits = () => {
-    return deposits.filter((deposit) => {
-      const depositDate = parse(
-        deposit.transactionDate,
-        'dd/MM/yyyy',
-        new Date(),
-      );
-
-      let meetsDate = true;
-      if (startDate) {
-        const start = new Date(startDate);
-        start.setHours(0, 0, 0, 0);
-        meetsDate = depositDate >= start;
-      }
-      if (endDate) {
-        const end = new Date(endDate);
-        end.setHours(23, 59, 59, 999);
-        meetsDate = meetsDate && depositDate <= end;
-      }
-
-      let meetsStatus = true;
-      if (statusFilter) {
-        meetsStatus = deposit.status === statusFilter;
-      }
-
-      return meetsDate && meetsStatus;
-    });
-  };
+  useEffect(() => {
+    fetchDeposit();
+  }, [currentPage, startDate, endDate, statusFilter, fetchDeposit]);
 
   const exportToExcel = () => {
     setLoading(true);
@@ -66,15 +66,12 @@ export function useReport() {
         alert('A data final deve ser posterior à data inicial.');
         return;
       }
-
-      const filteredDeposits = getFilteredDeposits();
-
-      if (filteredDeposits.length === 0) {
+      if (deposits.length === 0) {
         alert('Nenhum depósito encontrado com os filtros selecionados.');
         return;
       }
 
-      const dataToExport = filteredDeposits.map((deposit) => ({
+      const dataToExport = deposits.map((deposit) => ({
         'ID da Transação': deposit.transactionId,
         Telefone: deposit.phone,
         Carteira: deposit.coldWallet,
@@ -92,25 +89,14 @@ export function useReport() {
 
       const ws = XLSX.utils.json_to_sheet(dataToExport);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Deposit');
-      XLSX.writeFile(wb, 'deposit.xlsx');
+      XLSX.utils.book_append_sheet(wb, ws, 'Deposits');
+      XLSX.writeFile(wb, 'deposits.xlsx');
     } catch (error) {
-      console.error('Error exporting to Excel:', error);
+      console.error('Erro ao exportar para Excel:', error);
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchDeposit();
-  }, []);
-
-  const filteredDeposits = getFilteredDeposits();
-  const totalPages = Math.ceil(filteredDeposits.length / itemsPerPage);
-  const currentDeposits = filteredDeposits.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -121,7 +107,6 @@ export function useReport() {
   return {
     loading,
     exportToExcel,
-    currentDeposits,
     deposits,
     handlePageChange,
     currentPage,

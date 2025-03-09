@@ -1,46 +1,43 @@
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
 import { useReport } from './useReport';
+
+type FilterFormValues = {
+  startDate?: string;
+  endDate?: string;
+  status?: string;
+};
 
 export function Report() {
   const {
     loading,
     exportToExcel,
-    currentDeposits,
+    deposits,
     handlePageChange,
     currentPage,
     totalPages,
-    startDate,
-    endDate,
     setStartDate,
     setEndDate,
-    statusFilter,
     setStatusFilter,
   } = useReport();
 
-  const getPaginationPages = (current: number, total: number) => {
-    const pagesSet = new Set<number>();
-    pagesSet.add(1);
-    pagesSet.add(total);
-    pagesSet.add(current);
-    for (let i = 1; i <= 3; i++) {
-      if (current + i < total) {
-        pagesSet.add(current + i);
-      }
-    }
-    const sortedPages = Array.from(pagesSet).sort((a, b) => a - b);
-    const pagesWithEllipsis: (number | string)[] = [];
+  const form = useForm<FilterFormValues>();
 
-    sortedPages.forEach((page, index) => {
-      pagesWithEllipsis.push(page);
-      if (index < sortedPages.length - 1 && sortedPages[index + 1] - page > 1) {
-        pagesWithEllipsis.push('...');
-      }
-    });
-    return pagesWithEllipsis;
-  };
+  useEffect(() => {
+    const start =
+      form.watch().startDate === '' ? undefined : form.watch().startDate;
+    const end = form.watch().endDate === '' ? undefined : form.watch().endDate;
+    const status = form.watch().status === '' ? undefined : form.watch().status;
+    setStartDate(start);
+    setEndDate(end);
+    setStatusFilter(
+      status as 'paid' | 'expired' | 'pending' | 'canceled' | undefined,
+    );
+  }, [form, setEndDate, setStartDate, setStatusFilter]);
 
-  const paginationItems = getPaginationPages(currentPage, totalPages);
+  const paginationItems = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
     <>
@@ -49,53 +46,56 @@ export function Report() {
         Reporte de Depósitos
       </h1>
 
-      <div className="text-center mb-4">
-        <div className="flex flex-wrap justify-center gap-4 mb-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Data Inicial
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="ml-2 mt-1 p-1 border rounded-md"
-              />
-            </label>
+      <FormProvider {...form}>
+        <form className="text-center mb-4">
+          <div className="flex flex-wrap justify-center gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Data Inicial
+                <input
+                  type="date"
+                  {...form.register('startDate')}
+                  className="ml-2 mt-1 p-1 border rounded-md"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Data Final
+                <input
+                  type="date"
+                  {...form.register('endDate')}
+                  className="ml-2 mt-1 p-1 border rounded-md"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Status
+                <select
+                  {...form.register('status')}
+                  className="ml-2 mt-1 p-1 border rounded-md"
+                >
+                  <option value="">Todos</option>
+                  <option value="paid">Paid</option>
+                  <option value="pending">Pending</option>
+                  <option value="canceled">Canceled</option>
+                  <option value="expired">Expired</option>
+                </select>
+              </label>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Data Final
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="ml-2 mt-1 p-1 border rounded-md"
-              />
-            </label>
+          <div className="flex justify-center gap-4">
+            <button
+              type="button"
+              onClick={exportToExcel}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            >
+              Baixar em Excel
+            </button>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Status
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="ml-2 mt-1 p-1 border rounded-md"
-              >
-                <option value="">Todos</option>
-                <option value="paid">Paid</option>
-                <option value="pending">Pending</option>
-                <option value="canceled">Canceled</option>
-              </select>
-            </label>
-          </div>
-        </div>
-        <button
-          onClick={exportToExcel}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
-        >
-          Baixar em Excel
-        </button>
-      </div>
+        </form>
+      </FormProvider>
 
       <div className="pt-4 overflow-x-auto">
         <table className="min-w-full table-auto border-collapse border border-gray-300">
@@ -110,7 +110,7 @@ export function Report() {
             </tr>
           </thead>
           <tbody>
-            {currentDeposits.map((deposit) => (
+            {deposits.map((deposit) => (
               <tr key={deposit.transactionId} className="hover:bg-gray-100">
                 <td className="px-4 py-3 border border-gray-300">
                   {deposit.transactionId}
@@ -144,25 +144,17 @@ export function Report() {
             Anterior
           </button>
 
-          {paginationItems.map((item, index) =>
-            item === '...' ? (
-              <span key={index} className="px-3 py-1 mx-1">
-                {item}
-              </span>
-            ) : (
-              <button
-                key={index}
-                onClick={() => handlePageChange(item as number)}
-                className={`px-3 py-1 mx-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 ${
-                  item === currentPage
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200'
-                }`}
-              >
-                {item}
-              </button>
-            ),
-          )}
+          {paginationItems.map((item, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(item)}
+              className={`px-3 py-1 mx-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 ${
+                item === currentPage ? 'bg-blue-500 text-white' : 'bg-gray-200'
+              }`}
+            >
+              {item}
+            </button>
+          ))}
 
           <button
             onClick={() => handlePageChange(currentPage + 1)}

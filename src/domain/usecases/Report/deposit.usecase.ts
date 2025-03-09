@@ -1,11 +1,20 @@
 import { ReportRepository } from '../../../data/repositories/Report.repository';
 import { DefaultResultError, Result } from '../../../utils/Result';
 import { UseCase } from '../../../utils/UseCase';
-import { ReportedDeposit } from '../../entities/Report.entity';
+import { ReportedDepositPagination } from '../../entities/Report.entity';
 
-export type ListReq = object;
+export type ListReq = {
+  page: number;
+  pageSize: number;
+  status?: 'paid' | 'expired' | 'pending' | 'canceled';
+  startAt?: string;
+  endAt?: string;
+};
 export type ListRes = Promise<
-  Result<ReportedDeposit[], { code: 'SERIALIZATION' } | DefaultResultError>
+  Result<
+    ReportedDepositPagination,
+    { code: 'SERIALIZATION' } | DefaultResultError
+  >
 >;
 
 export type ReportDepositUseCase = UseCase<ListReq, ListRes>;
@@ -13,8 +22,14 @@ export type ReportDepositUseCase = UseCase<ListReq, ListRes>;
 export class ReportDepositUseCaseImpl implements ReportDepositUseCase {
   constructor(private repository: ReportRepository) {}
 
-  async execute(): ListRes {
-    const { result } = await this.repository.deposit({});
+  async execute(req: ListReq): ListRes {
+    const { result } = await this.repository.deposit({
+      page: req.page,
+      pageSize: req.pageSize,
+      status: req.status,
+      endAt: req.endAt,
+      startAt: req.startAt,
+    });
 
     if (result.type === 'ERROR') {
       switch (result.error.code) {
@@ -25,8 +40,6 @@ export class ReportDepositUseCaseImpl implements ReportDepositUseCase {
       }
     }
 
-    return Result.Success(
-      result.data.map((item) => ReportedDeposit.fromModel(item)),
-    );
+    return Result.Success(ReportedDepositPagination.fromModel(result.data));
   }
 }
