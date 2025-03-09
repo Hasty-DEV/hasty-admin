@@ -27,6 +27,7 @@ export const ListedCouponModel = z.object({
   code: z.string().min(1),
   discountType: z.enum(['percentage', 'fixedAmount']),
   discountValue: z.number(),
+  validFrom: z.string(),
   validUntil: z.string().optional(),
   minPurchaseValue: z.number().optional(),
   maxDiscountValue: z.number().optional(),

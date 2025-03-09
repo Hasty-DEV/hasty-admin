@@ -96,6 +96,7 @@ export class ListedCoupon {
   code!: string;
   discountType!: 'percentage' | 'fixedAmount';
   discountValue!: number;
+  validFrom!: string;
   validUntil?: string;
   minPurchaseValue?: number;
   maxDiscountValue?: number;
@@ -109,6 +110,7 @@ export class ListedCoupon {
     entity.id = couponModel.id;
     entity.code = couponModel.code;
     entity.discountType = couponModel.discountType;
+    entity.validFrom = couponModel.validFrom;
     entity.validUntil = couponModel.validUntil;
     entity.discountValue = couponModel.discountValue;
     entity.isActive = couponModel.isActive;

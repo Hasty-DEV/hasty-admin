@@ -14,16 +14,14 @@ import { ROUTES } from '../../routes/Routes';
 import { useCouponsList } from './useCouponsList';
 
 export function CouponsList() {
-  const { coupons, loading } = useCouponsList();
+  const { coupons, loading, currentPage, setCurrentPage } = useCouponsList();
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800';
-      case 'expired':
+      case 'inactive':
         return 'bg-red-100 text-red-800';
-      case 'scheduled':
-        return 'bg-blue-100 text-blue-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -57,7 +55,7 @@ export function CouponsList() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                       type="text"
-                      placeholder="Search coupons..."
+                      placeholder="Procurar Cupons..."
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
@@ -66,10 +64,9 @@ export function CouponsList() {
                   <div className="relative">
                     <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <select className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none">
-                      <option value="all">All Status</option>
-                      <option value="active">Active</option>
-                      <option value="expired">Expired</option>
-                      <option value="scheduled">Scheduled</option>
+                      <option value="all">Todos os Status</option>
+                      <option value="active">Ativo</option>
+                      <option value="inactive">Inativo</option>
                     </select>
                   </div>
                 </div>
@@ -81,22 +78,22 @@ export function CouponsList() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Code
+                      Código
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Discount
+                      Valor do Desconto
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Usage
+                      Uso
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Valid Until
+                      Valido até
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                      Ações
                     </th>
                   </tr>
                 </thead>
@@ -118,17 +115,19 @@ export function CouponsList() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(coupon.isActive ? 'active' : 'expired')}`}
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                            coupon.isActive ? 'active' : 'inactive',
+                          )}`}
                         >
-                          {coupon.isActive
-                            ? 'active'.toUpperCase()
-                            : 'expired'.toUpperCase()}
+                          {coupon.isActive ? 'ATIVO' : 'INATIVO'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex flex-col">
                           <span className="text-sm text-gray-900">
-                            {coupon.usedCount}/{coupon.usageLimit}
+                            {coupon.usageLimit &&
+                              `${coupon.usedCount}/${coupon.usageLimit}`}
+                            {!coupon.usageLimit && `${coupon.usedCount}`}
                           </span>
                           <div className="w-24 h-2 bg-gray-200 rounded-full mt-1">
                             <div
@@ -163,22 +162,24 @@ export function CouponsList() {
 
             <div className="px-6 py-4 border-t border-gray-200">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-700">Mostrando Tudo</div>
+                <div className="text-sm text-gray-700">
+                  Página {currentPage} de {50}
+                </div>
                 <div className="flex space-x-2">
                   <button
-                    // onClick={() =>
-                    //   setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    // }
-                    // disabled={currentPage === 1}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={currentPage === 1}
                     className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <button
-                    // onClick={() =>
-                    //   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    // }
-                    // disabled={currentPage === totalPages}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, 50))
+                    }
+                    disabled={currentPage === 50}
                     className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ChevronRight className="w-5 h-5" />

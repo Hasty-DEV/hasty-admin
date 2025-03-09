@@ -3,7 +3,10 @@ import { DefaultResultError, Result } from '../../../utils/Result';
 import { UseCase } from '../../../utils/UseCase';
 import { ListedCoupon } from '../../entities/Coupon.entity';
 
-export type ListReq = object;
+export type ListReq = {
+  limit: number;
+  page: number;
+};
 
 export type ListRes = Promise<
   Result<ListedCoupon[], { code: 'SERIALIZATION' } | DefaultResultError>
@@ -14,8 +17,11 @@ export type ListAllCouponsUseCase = UseCase<ListReq, ListRes>;
 export class ListAllCouponsUseCaseImpl implements ListAllCouponsUseCase {
   constructor(private repository: CouponRepository) {}
 
-  async execute(): ListRes {
-    const { result } = await this.repository.listAll({});
+  async execute(req: ListReq): ListRes {
+    const { result } = await this.repository.listAll({
+      limit: req.limit,
+      page: req.page,
+    });
 
     if (result.type === 'ERROR') {
       switch (result.error.code) {

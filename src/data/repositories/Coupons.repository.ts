@@ -22,7 +22,10 @@ export type InsertRes = Promise<
   >
 >;
 
-export type ListALLReq = object;
+export type ListALLReq = {
+  page: number;
+  limit: number;
+};
 export type ListALLRes = Promise<
   Result<ListedCouponModel[], { code: 'SERIALIZATION' } | DefaultResultError>
 >;
@@ -66,9 +69,9 @@ export class CouponRepositoryImpl implements CouponRepository {
   }
 
   @ExceptionHandler()
-  async listAll(): ListALLRes {
+  async listAll(req: ListALLReq): ListALLRes {
     const result = await this.api.get({
-      url: `/coupons/list-all`,
+      url: `/coupons/list-all?page=${req.page}&limit=${req.limit}`,
       model: z.array(ListedCouponModel),
     });
 

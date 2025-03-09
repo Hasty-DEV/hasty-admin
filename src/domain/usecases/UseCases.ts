@@ -20,7 +20,7 @@ const api = new RemoteDataSource(API_URL);
 const apiAlfred = new RemoteDataSource(ALFRED_URL);
 const authProvider = new FirebaseDatasourceImpl();
 
-const CouponRepository = new CouponRepositoryImpl(api);
+const CouponRepository = new CouponRepositoryImpl(apiAlfred);
 const newsletterRepository = new NewsletterRepositoryImpl(api);
 const authRepository = new AuthRepositoryImpl(authProvider);
 const reportRepository = new ReportRepositoryImpl(apiAlfred);
