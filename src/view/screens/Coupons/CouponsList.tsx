@@ -2,9 +2,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Edit,
-  Filter,
   Plus,
-  Search,
   Tag,
   Trash2,
 } from 'lucide-react';
@@ -49,7 +47,7 @@ export function CouponsList() {
               </div>
             </div>
 
-            <div className="p-6 border-b border-gray-200">
+            {/* <div className="p-6 border-b border-gray-200">
               <div className="flex flex-wrap gap-4">
                 <div className="flex-1">
                   <div className="relative">
@@ -72,7 +70,7 @@ export function CouponsList() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="overflow-x-auto">
               <table className="w-full">
