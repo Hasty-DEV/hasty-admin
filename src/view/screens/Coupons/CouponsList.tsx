@@ -1,62 +1,199 @@
+import {
+  ChevronLeft,
+  ChevronRight,
+  Edit,
+  Plus,
+  Tag,
+  Trash2,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
 import { ROUTES } from '../../routes/Routes';
 import { useCouponsList } from './useCouponsList';
 
 export function CouponsList() {
-  const { coupons, loading } = useCouponsList();
+  const { coupons, loading, currentPage, totalPages, setCurrentPage } =
+    useCouponsList();
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'inactive':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
     <>
       {loading && <Loader />}
-      <h1 className="text-2xl font-bold text-center pb-2">Listagem de Cupom</h1>
-      <div className="pt-4 overflow-x-auto">
-        <table className="min-w-full table-auto rounded-sm border-separate border-spacing-0">
-          <thead className="bg-blue-500 text-white">
-            <tr>
-              <th className="px-4 py-3 text-left text-sm font-semibold border-b border-gray-300">
-                Código
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold border-b border-gray-300">
-                Valor de Desconto
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold border-b border-gray-300">
-                Contagem de Uso
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold border-b border-gray-300">
-                Ativo
-              </th>
-              <th className="px-4 py-3 border-b border-gray-300"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {coupons.map((coupon) => (
-              <tr key={coupon.id} className="border-b hover:bg-gray-100">
-                <td className="px-4 py-4 text-sm border-t border-gray-200">
-                  {coupon.code}
-                </td>
-                <td className="px-4 py-4 text-sm border-t border-gray-200">
-                  {coupon.discountValue}
-                  {coupon.discountType === 'percentage' && '%'}
-                </td>
-                <td className="px-4 py-4 text-sm border-t border-gray-200">
-                  {coupon.usedCount}
-                </td>
-                <td className="px-4 py-4 text-sm border-t border-gray-200">
-                  {coupon.isActive ? 'Sim' : 'Não'}
-                </td>
-                <td className="px-4 py-4 text-sm border-t border-gray-200">
-                  <Link
-                    to={ROUTES.coupons.details.call(coupon.id)}
-                    className="w-full bg-blue-500 text-white py-2 px-4 rounded-md text-sm font-semibold hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+      <div className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white rounded-lg shadow-md">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-semibold text-gray-800">
+                  Controle de Cupons
+                </h1>
+                <Link
+                  to={ROUTES.coupons.create.call()}
+                  className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Adicionar Novo Cupom
+                </Link>
+              </div>
+            </div>
+
+            {/* <div className="p-6 border-b border-gray-200">
+              <div className="flex flex-wrap gap-4">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      placeholder="Procurar Cupons..."
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                  </div>
+                </div>
+                <div className="w-48">
+                  <div className="relative">
+                    <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <select className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none">
+                      <option value="all">Todos os Status</option>
+                      <option value="active">Ativo</option>
+                      <option value="inactive">Inativo</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div> */}
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Código
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Valor do Desconto
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Uso
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Valido até
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Ações
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {coupons.map((coupon) => (
+                    <tr key={coupon.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <Tag className="w-5 h-5 text-gray-400 mr-2" />
+                          <span className="font-medium text-gray-900">
+                            {coupon.code}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {coupon.discountType === 'percentage'
+                          ? `${coupon.discountValue}%`
+                          : `$${coupon.discountValue}`}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                            coupon.isActive ? 'active' : 'inactive',
+                          )}`}
+                        >
+                          {coupon.isActive ? 'ATIVO' : 'INATIVO'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-col">
+                          <span className="text-sm text-gray-900">
+                            {coupon.usageLimit &&
+                              `${coupon.usedCount}/${coupon.usageLimit}`}
+                            {!coupon.usageLimit && `${coupon.usedCount}`}
+                          </span>
+                          <div className="w-24 h-2 bg-gray-200 rounded-full mt-1">
+                            <div
+                              className="h-full bg-indigo-600 rounded-full"
+                              style={{
+                                width: `${(coupon.usedCount / (coupon.usageLimit ?? 1)) * 100}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(
+                          coupon.validUntil ?? Date.now(),
+                        ).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div className="flex space-x-2">
+                          <Link
+                            to={ROUTES.coupons.details.call(coupon.id)}
+                            className="p-1 hover:bg-gray-100 rounded-full"
+                          >
+                            <Edit className="w-5 h-5 text-gray-600" />
+                          </Link>
+                          <Link
+                            to={ROUTES.coupons.details.call(coupon.id)}
+                            className="p-1 hover:bg-gray-100 rounded-full"
+                          >
+                            <Trash2 className="w-5 h-5 text-red-600" />
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="px-6 py-4 border-t border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-700">
+                  Página {currentPage} de {totalPages}
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={currentPage === 1}
+                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Ações
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
+                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
