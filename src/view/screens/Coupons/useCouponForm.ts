@@ -11,8 +11,6 @@ export function useCouponForm() {
   const API_URL = String(import.meta.env.VITE_API_URL);
   const API_URL_ALFRED = String(import.meta.env.VITE_API_ALFRED);
 
-  const [selectedType, setSelectedType] = useState<'alfred' | 'diyseclab'>();
-
   const form = useForm<InsertCoupon>({
     resolver: zodResolver(InsertCouponSchema),
   });
@@ -26,7 +24,8 @@ export function useCouponForm() {
   const onSubmit = async (data: InsertCoupon) => {
     setLoading(true);
     try {
-      const apiUrl = selectedType === 'alfred' ? API_URL_ALFRED : API_URL;
+      const apiUrl =
+        form.getValues('type') === 'alfred' ? API_URL_ALFRED : API_URL;
 
       if (!apiUrl) {
         throw new Error('API URL não definida');
@@ -82,9 +81,8 @@ export function useCouponForm() {
 
   return {
     loading,
-    selectedType,
-    setSelectedType,
     form: {
+      value: form,
       errors,
       register,
       onsubmit: handleSubmit(onSubmit),

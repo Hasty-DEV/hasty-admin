@@ -11,7 +11,9 @@ import { ListAllCouponsUseCaseImpl } from './Coupons/list-all.usecase';
 import { ListOneCouponsUseCaseImpl } from './Coupons/list-one.usecase';
 import { ToggleCouponStatusUseCaseImpl } from './Coupons/toggle-status.usecase';
 import { ListAllNewsletterUseCaseImpl } from './Newsletter/list-all.usecase';
-import { ReportDepositUseCaseImpl } from './Report/deposit.usecase';
+import { ReportDepositAllUseCaseImpl } from './Report/deposit-all.usecase';
+import { ReportDepositOneUseCaseImpl } from './Report/deposit-one.usecase';
+import { ReportDepositPaginatedUseCaseImpl } from './Report/deposit-paginated.usecase';
 
 const API_URL = String(import.meta.env.VITE_API_URL);
 const ALFRED_URL = String(import.meta.env.VITE_API_ALFRED);
@@ -40,6 +42,10 @@ export const UseCases = {
     listAll: new ListAllNewsletterUseCaseImpl(newsletterRepository),
   },
   report: {
-    deposit: new ReportDepositUseCaseImpl(reportRepository),
+    deposit: {
+      paginated: new ReportDepositPaginatedUseCaseImpl(reportRepository),
+      all: new ReportDepositAllUseCaseImpl(reportRepository),
+      one: new ReportDepositOneUseCaseImpl(reportRepository),
+    },
   },
 };

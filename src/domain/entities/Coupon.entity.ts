@@ -38,6 +38,7 @@ export const InsertCouponSchema = z.object({
 });
 
 export class InsertCoupon {
+  type!: 'alfred' | 'diyseclab';
   code!: string;
   discountType!: 'percentage' | 'fixedAmount';
   discountValue!: number;

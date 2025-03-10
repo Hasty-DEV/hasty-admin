@@ -18,3 +18,13 @@ export const ReportedDepositModel = z.object({
   valueCollected: z.number().optional(),
 });
 export type ReportedDepositModel = z.infer<typeof ReportedDepositModel>;
+
+export const ReportedDepositPaginationModel = z.object({
+  data: z.array(ReportedDepositModel),
+  page: z.number().optional(),
+  pageSize: z.number().optional(),
+  totalPages: z.number().optional(),
+});
+export type ReportedDepositPaginationModel = z.infer<
+  typeof ReportedDepositPaginationModel
+>;
