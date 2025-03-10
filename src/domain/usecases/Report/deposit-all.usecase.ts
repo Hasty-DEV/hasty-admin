@@ -17,7 +17,7 @@ export class ReportDepositAllUseCaseImpl implements ReportDepositAllUseCase {
   constructor(private repository: ReportRepository) {}
 
   async execute(): ListRes {
-    const { result } = await this.repository.deposit();
+    const { result } = await this.repository.listAll();
 
     if (result.type === 'ERROR') {
       switch (result.error.code) {

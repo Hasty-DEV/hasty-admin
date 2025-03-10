@@ -28,16 +28,41 @@ export type ReportDepositRes = Promise<
   >
 >;
 
+export type ReportDepositListOneReq = {
+  id: string;
+};
+export type ReportDepositListOneRes = Promise<
+  Result<
+    ReportedDepositModel,
+    { code: 'SERIALIZATION' } | { code: 'NOT_FOUND' } | DefaultResultError
+  >
+>;
+
 export interface ReportRepository {
-  deposit(): ReportDepositRes;
-  depositPaginated(req: ReportDepositPaginatedReq): ReportDepositPaginatedRes;
+  listOne(req: ReportDepositListOneReq): ReportDepositListOneRes;
+  listAll(): ReportDepositRes;
+  listAllPaginated(req: ReportDepositPaginatedReq): ReportDepositPaginatedRes;
 }
 
 export class ReportRepositoryImpl implements ReportRepository {
   constructor(private api: RemoteDataSource) {}
 
   @ExceptionHandler()
-  async deposit(): ReportDepositRes {
+  async listOne(req: ReportDepositListOneReq): ReportDepositListOneRes {
+    const result = await this.api.get({
+      url: `/report/deposit/${req.id}`,
+      model: ReportedDepositModel,
+    });
+
+    if (!result) {
+      return Result.Error({ code: 'SERIALIZATION' });
+    }
+
+    return Result.Success(result);
+  }
+
+  @ExceptionHandler()
+  async listAll(): ReportDepositRes {
     const result = await this.api.get({
       url: `/report/deposit`,
       model: z.array(ReportedDepositModel),
@@ -51,7 +76,7 @@ export class ReportRepositoryImpl implements ReportRepository {
   }
 
   @ExceptionHandler()
-  async depositPaginated(
+  async listAllPaginated(
     req: ReportDepositPaginatedReq,
   ): ReportDepositPaginatedRes {
     const params = new URLSearchParams();

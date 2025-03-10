@@ -12,6 +12,7 @@ import { ListOneCouponsUseCaseImpl } from './Coupons/list-one.usecase';
 import { ToggleCouponStatusUseCaseImpl } from './Coupons/toggle-status.usecase';
 import { ListAllNewsletterUseCaseImpl } from './Newsletter/list-all.usecase';
 import { ReportDepositAllUseCaseImpl } from './Report/deposit-all.usecase';
+import { ReportDepositOneUseCaseImpl } from './Report/deposit-one.usecase';
 import { ReportDepositPaginatedUseCaseImpl } from './Report/deposit-paginated.usecase';
 
 const API_URL = String(import.meta.env.VITE_API_URL);
@@ -44,6 +45,7 @@ export const UseCases = {
     deposit: {
       paginated: new ReportDepositPaginatedUseCaseImpl(reportRepository),
       all: new ReportDepositAllUseCaseImpl(reportRepository),
+      one: new ReportDepositOneUseCaseImpl(reportRepository),
     },
   },
 };
