@@ -1,4 +1,24 @@
-import { ReportedDepositModel } from '../../data/model/Report.model';
+import {
+  ReportedDepositModel,
+  ReportedDepositPaginationModel,
+} from '../../data/model/Report.model';
+
+export class ReportedDepositPagination {
+  data!: ReportedDeposit[];
+  totalPages?: number;
+
+  public static fromModel(
+    model: ReportedDepositPaginationModel,
+  ): ReportedDepositPagination {
+    const entity = new ReportedDepositPagination();
+
+    entity.data = model.data.map((item) => ReportedDeposit.fromModel(item));
+
+    entity.totalPages = model.totalPages;
+
+    return entity;
+  }
+}
 
 export class ReportedDeposit {
   id!: string;

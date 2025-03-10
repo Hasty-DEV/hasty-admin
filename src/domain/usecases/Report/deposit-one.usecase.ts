@@ -3,21 +3,30 @@ import { DefaultResultError, Result } from '../../../utils/Result';
 import { UseCase } from '../../../utils/UseCase';
 import { ReportedDeposit } from '../../entities/Report.entity';
 
-export type ListReq = object;
+export type ListReq = {
+  id: string;
+};
 export type ListRes = Promise<
-  Result<ReportedDeposit[], { code: 'SERIALIZATION' } | DefaultResultError>
+  Result<
+    ReportedDeposit,
+    { code: 'SERIALIZATION' } | { code: 'NOT_FOUND' } | DefaultResultError
+  >
 >;
 
-export type ReportDepositUseCase = UseCase<ListReq, ListRes>;
+export type ReportDepositOneUseCase = UseCase<ListReq, ListRes>;
 
-export class ReportDepositUseCaseImpl implements ReportDepositUseCase {
+export class ReportDepositOneUseCaseImpl implements ReportDepositOneUseCase {
   constructor(private repository: ReportRepository) {}
 
-  async execute(): ListRes {
-    const { result } = await this.repository.deposit({});
+  async execute(req: ListReq): ListRes {
+    const { result } = await this.repository.listOne({
+      id: req.id,
+    });
 
     if (result.type === 'ERROR') {
       switch (result.error.code) {
+        case 'NOT_FOUND':
+          return Result.Error({ code: 'NOT_FOUND' });
         case 'SERIALIZATION':
           return Result.Error({ code: 'SERIALIZATION' });
         default:
@@ -25,8 +34,6 @@ export class ReportDepositUseCaseImpl implements ReportDepositUseCase {
       }
     }
 
-    return Result.Success(
-      result.data.map((item) => ReportedDeposit.fromModel(item)),
-    );
+    return Result.Success(ReportedDeposit.fromModel(result.data));
   }
 }
