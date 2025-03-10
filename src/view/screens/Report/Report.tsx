@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
 import { useReport } from './useReport';
@@ -25,17 +25,28 @@ export function Report() {
 
   const form = useForm<FilterFormValues>();
 
+  const startDateValue = useWatch({ control: form.control, name: 'startDate' });
+  const endDateValue = useWatch({ control: form.control, name: 'endDate' });
+  const statusValue = useWatch({ control: form.control, name: 'status' });
+
   useEffect(() => {
-    const start =
-      form.watch().startDate === '' ? undefined : form.watch().startDate;
-    const end = form.watch().endDate === '' ? undefined : form.watch().endDate;
-    const status = form.watch().status === '' ? undefined : form.watch().status;
+    const start = startDateValue === '' ? undefined : startDateValue;
+    const end = endDateValue === '' ? undefined : endDateValue;
+    const status = statusValue === '' ? undefined : statusValue;
+
     setStartDate(start);
     setEndDate(end);
     setStatusFilter(
       status as 'paid' | 'expired' | 'pending' | 'canceled' | undefined,
     );
-  }, [form, setEndDate, setStartDate, setStatusFilter]);
+  }, [
+    startDateValue,
+    endDateValue,
+    statusValue,
+    setStartDate,
+    setEndDate,
+    setStatusFilter,
+  ]);
 
   const paginationItems = Array.from({ length: totalPages }, (_, i) => i + 1);
 

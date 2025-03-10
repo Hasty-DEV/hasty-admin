@@ -15,35 +15,35 @@ export function useReport() {
   const itemsPerPage = 10;
   const [totalPages, setTotalPages] = useState<number>(1);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [startDate, endDate, statusFilter]);
+
   const fetchDeposit = useCallback(async () => {
     setLoading(true);
     try {
-      const params: {
-        page: number;
-        pageSize: number;
-        status?: 'paid' | 'expired' | 'pending' | 'canceled';
-        startAt?: string;
-        endAt?: string;
-      } = {
+      const params = {
         page: currentPage,
         pageSize: itemsPerPage,
+        status: statusFilter,
+        startAt: startDate,
+        endAt: endDate,
       };
 
-      if (statusFilter !== undefined) {
-        params.status = statusFilter;
-      }
-      if (startDate !== undefined) {
-        params.startAt = startDate;
-      }
-      if (endDate !== undefined) {
-        params.endAt = endDate;
-      }
-
-      const { result } = await UseCases.report.deposit.execute(params);
+      const { result } =
+        await UseCases.report.deposit.paginated.execute(params);
 
       if (result.type === 'ERROR') {
-        console.error(result);
-        alert('Erro ao buscar depósitos.');
+        switch (result.error.code) {
+          case 'NOT_FOUND':
+            setDeposits([]);
+            break;
+          default:
+            console.error(result);
+            alert('Erro ao buscar depósitos.');
+            break;
+        }
+
         return;
       }
       setDeposits(result.data.data);
@@ -59,19 +59,41 @@ export function useReport() {
     fetchDeposit();
   }, [currentPage, startDate, endDate, statusFilter, fetchDeposit]);
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     setLoading(true);
     try {
       if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
         alert('A data final deve ser posterior à data inicial.');
         return;
       }
-      if (deposits.length === 0) {
-        alert('Nenhum depósito encontrado com os filtros selecionados.');
-        return;
-      }
 
-      const dataToExport = deposits.map((deposit) => ({
+      let allDeposits: ReportedDeposit[] = [];
+      let page = 1;
+      let total = 1;
+
+      do {
+        const params = {
+          page,
+          pageSize: itemsPerPage,
+          status: statusFilter,
+          startAt: startDate,
+          endAt: endDate,
+        };
+
+        const { result } =
+          await UseCases.report.deposit.paginated.execute(params);
+
+        if (result.type === 'ERROR') {
+          alert('Erro ao exportar depósitos.');
+          return;
+        }
+
+        allDeposits = [...allDeposits, ...result.data.data];
+        total = result.data.totalPages ?? 1;
+        page++;
+      } while (page <= total);
+
+      const dataToExport = allDeposits.map((deposit) => ({
         'ID da Transação': deposit.transactionId,
         Telefone: deposit.phone,
         Carteira: deposit.coldWallet,

@@ -13,17 +13,19 @@ export type ListReq = {
 export type ListRes = Promise<
   Result<
     ReportedDepositPagination,
-    { code: 'SERIALIZATION' } | DefaultResultError
+    { code: 'SERIALIZATION' } | { code: 'NOT_FOUND' } | DefaultResultError
   >
 >;
 
-export type ReportDepositUseCase = UseCase<ListReq, ListRes>;
+export type ReportDepositPaginatedUseCase = UseCase<ListReq, ListRes>;
 
-export class ReportDepositUseCaseImpl implements ReportDepositUseCase {
+export class ReportDepositPaginatedUseCaseImpl
+  implements ReportDepositPaginatedUseCase
+{
   constructor(private repository: ReportRepository) {}
 
   async execute(req: ListReq): ListRes {
-    const { result } = await this.repository.deposit({
+    const { result } = await this.repository.depositPaginated({
       page: req.page,
       pageSize: req.pageSize,
       status: req.status,
@@ -33,6 +35,8 @@ export class ReportDepositUseCaseImpl implements ReportDepositUseCase {
 
     if (result.type === 'ERROR') {
       switch (result.error.code) {
+        case 'NOT_FOUND':
+          return Result.Error({ code: 'NOT_FOUND' });
         case 'SERIALIZATION':
           return Result.Error({ code: 'SERIALIZATION' });
         default:
