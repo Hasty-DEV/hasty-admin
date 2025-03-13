@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RemoteDataSource } from '../../../data/datasource/Remote.datasource';
 import { FAQRepositoryImpl } from '../../../data/repositories/FAQ.repository';
 import { ROUTES } from '../../routes/Routes';
 
@@ -17,7 +16,7 @@ export default function FAQList() {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const repository = new FAQRepositoryImpl(new RemoteDataSource());
+  const repository = new FAQRepositoryImpl();
 
   useEffect(() => {
     async function fetchFAQs() {

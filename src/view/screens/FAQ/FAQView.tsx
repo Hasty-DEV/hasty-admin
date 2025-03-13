@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { RemoteDataSource } from '../../../data/datasource/Remote.datasource';
 import { FAQRepositoryImpl } from '../../../data/repositories/FAQ.repository';
 
 interface FAQ {
@@ -14,7 +13,7 @@ export default function FAQView() {
   const [loading, setLoading] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [expandedQuestion, setExpandedQuestion] = useState<string | null>(null);
-  const repository = new FAQRepositoryImpl(new RemoteDataSource());
+  const repository = new FAQRepositoryImpl();
 
   useEffect(() => {
     async function fetchFAQs() {
