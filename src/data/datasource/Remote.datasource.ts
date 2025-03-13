@@ -25,6 +25,11 @@ export type RemotePostReq<Response extends SerializeSchemas> = {
   body?: any;
 };
 
+export type RemoteDeleteReq<Response extends SerializeSchemas> = {
+  url: string;
+  model: Response;
+};
+
 type RemoteRequestRes<Response extends SerializeSchemas> = Promise<
   Response['_type'] | null
 >;
@@ -102,6 +107,23 @@ export class RemoteDataSource {
     body,
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
     const { data } = await this.api.patch<Response>(url, body, {
+      timeout: 100000,
+    });
+
+    const serialized = model.safeParse(data);
+
+    console.log(serialized.error?.errors);
+
+    if (!serialized.success) return null;
+
+    return serialized.data;
+  }
+
+  public async delete<Response extends SerializeSchemas>({
+    model,
+    url,
+  }: RemoteDeleteReq<Response>): RemoteRequestRes<Response> {
+    const { data } = await this.api.delete<Response>(url, {
       timeout: 100000,
     });
 
