@@ -23,6 +23,20 @@ export const ROUTES = {
       call: () => '/newsletter/list-all',
     },
   },
+  faq: {
+    create: {
+      path: '/faq/create',
+      call: () => '/faq/create',
+    },
+    listAll: {
+      path: '/faq/list-all',
+      call: () => '/faq/list-all',
+    },
+    viewFAQ: {
+      path: '/faq/view',
+      call: () => '/faq/view',
+    },
+  },
   report: {
     call: () => '/report',
     path: '/report',
