@@ -31,17 +31,17 @@ const CouponDetails = lazy(() =>
     default: module.CouponDetails,
   })),
 );
+const FAQCreate = lazy(() => import('../screens/FAQ/FAQCreate'));
+const FAQList = lazy(() => import('../screens/FAQ/FAQList'));
+
+const FAQView = lazy(() => import('../screens/FAQ/FAQView'));
 
 export function BrowserRouter() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-      }
+      setIsAuthenticated(!!user);
     });
 
     return () => unsubscribe();
@@ -84,6 +84,9 @@ export function BrowserRouter() {
                   path={ROUTES.newsletter.listAll.path}
                   element={<ListAllNewsletter />}
                 />
+                <Route path={ROUTES.faq.create.path} element={<FAQCreate />} />
+                <Route path={ROUTES.faq.listAll.path} element={<FAQList />} />
+                <Route path={ROUTES.faq.viewFAQ.path} element={<FAQView />} />
                 <Route path={ROUTES.report.path} element={<Report />} />
                 <Route path="/report/:depositId" element={<DepositDetail />} />
                 <Route path="*" element={<Navigate to={ROUTES.home.path} />} />
