@@ -1,6 +1,5 @@
 import { ExceptionHandler } from '../../utils/ExceptionHandler';
 import { Result } from '../../utils/Result';
-import { RemoteDataSource } from '../datasource/Remote.datasource';
 import { InsertFAQModel, InsertedFAQModelType } from '../model/FAQ.model';
 
 export type InsertFAQReq = InsertFAQModel;
@@ -31,7 +30,7 @@ export interface FAQRepository {
 }
 const API_URL_ALFRED = String(import.meta.env.VITE_API_ALFRED);
 export class FAQRepositoryImpl implements FAQRepository {
-  constructor(private api: RemoteDataSource) {}
+  constructor() {}
 
   @ExceptionHandler()
   async createFAQ(req: InsertFAQReq): InsertFAQRes {
